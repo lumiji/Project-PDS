@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <title>PDS Finder Dashboard</title>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="mb-4">PDS Finder Dashboard</h2>
+
+        <!-- Action Bar: Search and Add -->
+        <div class="d-flex justify-content-between mb-4">
+            <form action="/search" method="GET" class="d-flex w-75">
+                <input type="text" name="search_query" class="form-control me-2" placeholder="Search by name, ID, or department...">
+                <button type="submit" class="btn btn-outline-primary">Search</button>
+            </form>
+            <a href="/" class="btn btn-primary">+ Add New PDS</a>
+        </div>
+
+        <!-- Records Table -->
+        <div class="card shadow-sm">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.agency_emp_num }}</td>
+                        <td>{{ employee.first_name }} {{ employee.surname }}</td>
+                        <td>{{ employee.department }}</td>
+                        <td>
+                            <a href="/view/{{ employee.id }}" class="btn btn-sm btn-info">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

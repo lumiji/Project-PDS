@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Digital Personal Data Sheet</title>
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        body { background-color: yellow !important; }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5 mb-5">
+    <!-- Header -->
+    <h2 class="text-center mb-4" style="color: #2c3e50; font-weight: bold;">
+        Personal Data Sheet <span class="fs-5 text-muted">(CS Form No. 212)</span>
+    </h2>
+    
+    <!-- The Form Card -->
+    <form action="/submit_pds" method="POST" class="card shadow-sm p-4">
+
+                <!-- SECTION 1: PERSONAL INFORMATION -->
+        <h4 class="text-primary border-bottom pb-2 mb-4">I. Personal Information</h4>
+
+        <!-- Surname: Takes the full width or fits your design -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">1. SURNAME</label>
+            <input type="text" name="surname" class="form-control" required>
+        </div>
+
+        <!-- Row containing First Name and Name Extension -->
+        <div class="row">
+            <div class="col-md-8 mb-3"> <!-- First Name column (wider) -->
+                <label class="form-label fw-bold">2. FIRST NAME</label>
+                <input type="text" name="first_name" class="form-control" required>
+            </div>
+            <div class="col-md-4 mb-3"> <!-- Name Extension column (smaller) -->
+                <label class="form-label fw-bold">NAME EXTENSION</label>
+                <input type="text" name="name_ext" class="form-control" placeholder="e.g. JR, SR">
+            </div>
+        </div>
+
+        <!-- Middle Name -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">MIDDLE NAME</label>
+            <input type="text" name="middle_name" class="form-control">
+        </div>
+
+        <div class="row">
+            <!-- COLUMN 1: Fields 3 to 15 -->
+            <div class="col-md-6">
+                <!-- 3. Date of Birth -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">3. DATE OF BIRTH</label>
+                    <input type="date" name="birthdate" class="form-control">
+                </div>
+
+                <!-- 4. Place of Birth -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">4. PLACE OF BIRTH</label>
+                    <input type="text" name="birthplace" class="form-control">
+                </div>
+
+                <!-- 5. Sex at Birth (Horizontal Radios) -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold d-block">5. SEX AT BIRTH</label>
+                    <div class="d-flex gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sex" value="Male" id="sexMale">
+                            <label class="form-check-label" for="sexMale">Male</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="sex" value="Female" id="sexFemale">
+                            <label class="form-check-label" for="sexFemale">Female</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Civil Status (Horizontal Radios) -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold d-block">6. CIVIL STATUS</label>
+                    <div class="d-flex flex-wrap gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Single" id="s1"><label class="form-check-label" for="s1">Single</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Married" id="s2"><label class="form-check-label" for="s2">Married</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Widowed" id="s3"><label class="form-check-label" for="s3">Widowed</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Separated" id="s4"><label class="form-check-label" for="s4">Separated</label></div>
+                        <div class="form-check d-flex align-items-center gap-2">
+                            <input class="form-check-input" type="radio" name="civil_status" value="Other" id="statusOther">
+                            <label class="form-check-label" for="statusOther" style="white-space: nowrap;">Others:</label>
+                            <input type="text" name="civil_status_other" class="form-control form-control-sm" style="width: 150px;" placeholder="Specify">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7 to 15 (Single Column) -->
+                <div class="mb-3"><label class="form-label fw-bold">7. HEIGHT (m)</label><input type="text" name="height_m" class="form-control"></div>
+                <div class="mb-3"><label class="form-label fw-bold">8. WEIGHT (kg)</label><input type="text" name="weight_kg" class="form-control"></div>
+                <div class="mb-3"><label class="form-label fw-bold">9. BLOOD TYPE</label><input type="text" name="blood_type" class="form-control"></div>
+                <div class="mb-3"><label class="form-label fw-bold">10. UMID ID NO.</label><input type="text" name="umid_id_num" class="form-control"></div>
+                <div class="mb-3"><label class="form-label fw-bold">11. PAG-IBIG ID NO.</label><input type="text" name="pagibig_id_num" class="form-control"></div>
+                <div class="mb-3"><label class="form-label fw-bold">12. PHILHEALTH NO.</label><input type="text" name="philhealth_num" class="form-control"></div>
+                <div class="mb-3"><label class="form-label fw-bold">13. PhilSys Number (PSN)</label><input type="text" name="philsys_num" class="form-control"></div>
+                <div class="mb-3"><label class="form-label fw-bold">14. TIN NO.</label><input type="text" name="tin_num" class="form-control"></div>
+                <div class="mb-3"><label class="form-label fw-bold">15. AGENCY EMPLOYEE NO.</label><input type="text" name="agency_emp_num" class="form-control"></div>
+            </div>
+
+            <!-- COLUMN 2: RESERVED FOR 17 TO 21 -->
+            <div class="col-md-6">
+                
+                <!-- CITIZENSHIP -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="form-label fw-bold">16. CITIZENSHIP</label>
+                        <label class="form-label fw-italic d-block"> (If holder of dual citizenship, please indicate the details.)</label>
+                    </div>
+                    
+                    <div class="d-flex flex-wrap gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="Filipino" id="s1"><label class="form-check-label" for="s1">Filipino</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="Dual Citizenship" id="s2"><label class="form-check-label" for="s2">Dual Citizenship</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="byBirth" id="s3"><label class="form-check-label" for="s3">By Birth</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="byNaturalization" id="s4"><label class="form-check-label" for="s4">By Naturalization</label></div>
+                        
+                        <!-- Aligned Row -->
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="form-label fw-italic mb-0" style="white-space: nowrap;">Pls. indicate country:</label>
+                            <input type="text" name="country" class="form-control form-control-sm" style="width: 150px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Residential Address -->
+                <div class="row">
+                    <label class="form-label fw-bold">17. RESIDENTIAL ADDRESS</label>
+                    <div class="row">
+                        <!-- ZIP CODE: Full width -->
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-semi-bold">ZIP CODE</label>
+                            <input type="text" name="zip" class="form-control" required>
+                        </div>
+
+                        <!-- House/Street: Side-by-side -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">House/Block/Lot No.</label>
+                            <input type="text" name="house" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">Street</label>
+                            <input type="text" name="street" class="form-control" required>
+                        </div>
+
+                        <!-- Village/Barangay: Side-by-side -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">Subdivision/Village</label>
+                            <input type="text" name="village" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">Barangay</label>
+                            <input type="text" name="barangay" class="form-control" required>
+                        </div>
+
+                        <!-- City/Province: Side-by-side -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">City/Municipality</label>
+                            <input type="text" name="city" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">Province</label>
+                            <input type="text" name="province" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permanent Address -->
+                <div class="row">
+                    <label class="form-label fw-bold">18. PERMANENT ADDRESS</label>
+                    <!-- ZIP CODE: Full width -->
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-semi-bold">ZIP CODE</label>
+                            <input type="text" name="zip" class="form-control" required>
+                        </div>
+
+                        <!-- House/Street: Side-by-side -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">House/Block/Lot No.</label>
+                            <input type="text" name="house" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">Street</label>
+                            <input type="text" name="street" class="form-control" required>
+                        </div>
+
+                        <!-- Village/Barangay: Side-by-side -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">Subdivision/Village</label>
+                            <input type="text" name="village" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">Barangay</label>
+                            <input type="text" name="barangay" class="form-control" required>
+                        </div>
+
+                        <!-- City/Province: Side-by-side -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">City/Municipality</label>
+                            <input type="text" name="city" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semi-bold">Province</label>
+                            <input type="text" name="province" class="form-control" required>
+                        </div>
+                </div>
+
+                <!-- TELEPHONE NO. -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">19. TELEPHONE NO.</label>
+                    <input type="text" name="telephone_num" class="form-control">
+                </div>
+
+                <!-- MOBILE NO. -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">20. MOBILE NO.</label>
+                    <input type="text" name="mobile_num" class="form-control">
+                </div>
+
+                <!-- EMAIL ADDRESS -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">21. EMAIL ADDRESS (if any)</label>
+                    <input type="text" name="email_add" class="form-control">
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+            Save PDS Record
+        </button>
+
+    </form>
+</div>
+
+<div class="alert alert-success" role="alert">
+  Bootstrap is successfully loaded!
+</div>
+
+</body>
+
+</html>

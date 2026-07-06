@@ -3,18 +3,108 @@
 <head>
     <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
     <title>PDS Finder Dashboard</title>
+    <style>
+        .filter-bar {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            padding: 16px 18px;
+        }
+        .filter-bar label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .active-filter-pill {
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <div class="container mt-5">
         <h2 class="mb-4">PDS Finder Dashboard</h2>
 
-        <!-- Action Bar: Search and Add -->
-        <div class="d-flex justify-content-between mb-4">
-            <form action="/search" method="GET" class="d-flex w-75">
-                <input type="text" name="search_query" class="form-control me-2" placeholder="Search by name, ID, or department...">
-                <button type="submit" class="btn btn-outline-primary">Search</button>
-            </form>
-            <a href="/" class="btn btn-primary">+ Add New PDS</a>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+                        <strong>{{ 'Success!' if category == 'success' else 'Error!' }}</strong> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Search / Filter / Sort bar -->
+        <form action="{{ url_for('dashboard') }}" method="GET" id="filterForm" class="filter-bar mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="searchInput">Search</label>
+                    <div class="input-group">
+                        <input type="text" name="search_query" id="searchInput" class="form-control"
+                               placeholder="Name, employee no., email, mobile..."
+                               value="{{ search_query or '' }}">
+                        {% if search_query or (selected_department and selected_department != 'All') %}
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary" title="Clear all filters">Clear</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="departmentFilter">Department</label>
+                    <select name="department" id="departmentFilter" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                        <option value="All" {% if not selected_department or selected_department == 'All' %}selected{% endif %}>All Departments</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept.name }}" {% if selected_department == dept.name %}selected{% endif %}>{{ dept.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="sortBy">Sort by</label>
+                    <select name="sort_by" id="sortBy" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                        <option value="date_created" {% if sort_by == 'date_created' %}selected{% endif %}>Date Added</option>
+                        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name (Alphabetical)</option>
+                        <option value="department" {% if sort_by == 'department' %}selected{% endif %}>Department</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="sortDir">Order</label>
+                    <select name="sort_dir" id="sortDir" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                        <option value="asc" {% if sort_dir == 'asc' %}selected{% endif %}>Ascending (A-Z)</option>
+                        <option value="desc" {% if sort_dir == 'desc' or not sort_dir %}selected{% endif %}>Descending (Z-A)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col d-flex justify-content-between align-items-center">
+                    <div>
+                        {% if search_query %}
+                            <span class="badge bg-primary-subtle text-primary-emphasis active-filter-pill me-2">Search: "{{ search_query }}"</span>
+                        {% endif %}
+                        {% if selected_department and selected_department != 'All' %}
+                            <span class="badge bg-info-subtle text-info-emphasis active-filter-pill me-2">Dept: {{ selected_department }}</span>
+                        {% endif %}
+                        <span class="text-muted small">{{ employees|length }} record{{ '' if employees|length == 1 else 's' }} found</span>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="row mb-4 align-items-center">
+            <div class="col-12 text-end">
+                <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#departmentModal">
+                    Manage Departments
+                </button>
+                <a href="/" class="btn btn-primary">+ Add New PDS</a>
+            </div>
         </div>
 
         <!-- Records Table -->
@@ -29,19 +119,91 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for employee in employees %}
+                    {% for emp in employees %}
                     <tr>
-                        <td>{{ employee.agency_emp_num }}</td>
-                        <td>{{ employee.first_name }} {{ employee.surname }}</td>
-                        <td>{{ employee.department }}</td>
+                        <td>{{ emp.agency_emp_num }}</td>
+                        <td>{{ emp.surname }}, {{ emp.first_name }}</td>
                         <td>
-                            <a href="/view/{{ employee.id }}" class="btn btn-sm btn-info">View</a>
+                            <form action="{{ url_for('assign_department', id=emp.id) }}" method="POST" class="mb-0">
+                                <select name="department" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="N/A" {% if emp.department == 'N/A' %}selected{% endif %}>N/A</option>
+                                    {% for dept in departments %}
+                                        <option value="{{ dept.name }}" {% if emp.department == dept.name %}selected{% endif %}>
+                                            {{ dept.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </form>
                         </td>
+                        <td>
+                            <a href="{{ url_for('view_pds', id=emp.id) }}" class="btn btn-sm btn-info text-white">View</a>
+                            <a href="{{ url_for('edit_pds', id=emp.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{{ url_for('delete_pds', id=emp.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this record?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">No records match your search/filter.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+
+    <div class="modal fade" id="departmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Departments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+                <form action="{{ url_for('add_department') }}" method="POST" class="d-flex gap-2 mb-4">
+                    <input type="text" name="new_department" class="form-control" placeholder="New department name..." required>
+                    <button type="submit" class="btn btn-success">Add</button>
+                </form>
+
+                <ul class="list-group">
+                    {% for dept in departments %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ dept.name }}
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="promptEdit('{{ dept.name }}')">Edit</button>
+                            
+                            <form action="{{ url_for('delete_department') }}" method="POST" onsubmit="return confirm('Delete this department? Employees assigned to it will be set to N/A.');">
+                                <input type="hidden" name="dept_name" value="{{ dept.name }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="editDeptForm" action="{{ url_for('edit_department') }}" method="POST" class="d-none">
+    <input type="hidden" name="old_name" id="editOldName">
+    <input type="hidden" name="new_name" id="editNewName">
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Simple JavaScript prompt to handle editing without cluttering the UI
+    function promptEdit(oldName) {
+        let newName = prompt("Enter new name for department:", oldName);
+        if (newName && newName.trim() !== "" && newName !== oldName) {
+            document.getElementById('editOldName').value = oldName;
+            document.getElementById('editNewName').value = newName.trim();
+            document.getElementById('editDeptForm').submit();
+        }
+    }
+</script>
+
 </body>
 </html>

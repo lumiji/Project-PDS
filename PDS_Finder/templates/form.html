@@ -5,246 +5,1106 @@
     <title>Digital Personal Data Sheet</title>
     <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
     <style>
-        body { background-color: yellow !important; }
+        body { background-color: #f5f6f8; }
+
+        /* ---------- Sidebar ---------- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 240px;
+            background: #ffffff;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.08);
+            overflow-y: auto;
+            z-index: 1050;
+            padding: 20px 12px;
+        }
+
+        .sidebar h5 {
+            font-weight: bold;
+            color: #2c3e50;
+            padding: 0 10px;
+        }
+
+        .sidebar .nav-link {
+            color: #333;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 10px;
+            margin-bottom: 2px;
+            font-size: 0.92rem;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #f8f9fa;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: #ffffff;
+        }
+
+        .sidebar hr {
+            margin: 10px 6px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 30px 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        #section2 { margin-top: 25px; }
+
+        /* Ensure inputs inside table are seamless */
+        .table .form-control {
+            border: none;
+            background: transparent;
+            border-radius: 0;
+        }
+
+        .table .form-control:focus {
+            background: #fff;
+            box-shadow: none;
+            border: 1px solid #0d6efd;
+        }
+
+        .table th {
+            font-size: 0.85rem;
+            vertical-align: middle;
+        }
+
+        .section-heading {
+            scroll-margin-top: 20px;
+        }
+
+        /* Let each table input grow/shrink to fit its own value instead of
+           being locked to the column width. table-layout stays "auto" (the
+           default), so a column will widen automatically once the input
+           inside it needs more room. */
+        .table td { white-space: nowrap; }
+        .table .form-control {
+            width: 10ch;      /* fallback before JS measures the value below */
+            min-width: 60px;
+            transition: width 0.12s ease-in-out;
+        }
     </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container mt-5 mb-5">
-    <!-- Header -->
-    <h2 class="text-center mb-4" style="color: #2c3e50; font-weight: bold;">
-        Personal Data Sheet <span class="fs-5 text-muted">(CS Form No. 212)</span>
-    </h2>
-    
-    <!-- The Form Card -->
-    <form action="/submit_pds" method="POST" class="card shadow-sm p-4">
+<!-- ================= SIDEBAR ================= -->
+<nav class="sidebar">
+    <h5 class="mb-3">PDS Navigation</h5>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-secondary w-100 mb-2">&lt; Dashboard</a>
+    <hr>
+    <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link" href="#section1">I. Personal Info</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section2">II. Family Background</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section3">III. Educational Background</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section4">IV. Civil Service Eligibility</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section5">V. Work Experience</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section6">VI. Voluntary Work</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section7">VII. Learning &amp; Development</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section8">VIII. Other Information</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section9">Background Questions</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section10">References</a></li>
+        <li class="nav-item"><a class="nav-link" href="#section11">Certification</a></li>
+    </ul>
+</nav>
 
-                <!-- SECTION 1: PERSONAL INFORMATION -->
-        <h4 class="text-primary border-bottom pb-2 mb-4">I. Personal Information</h4>
+<!-- ================= MAIN CONTENT ================= -->
+<div class="main-content">
+    <div class="container-fluid mb-5">
+        <h2 class="text-center mb-4" style="color: #2c3e50; font-weight: bold;">
+            Personal Data Sheet <span class="fs-5 text-muted">(CS Form No. 212)</span>
+        </h2>
 
-        <!-- Surname: Takes the full width or fits your design -->
-        <div class="mb-3">
-            <label class="form-label fw-bold">1. SURNAME</label>
-            <input type="text" name="surname" class="form-control" required>
-        </div>
+        <form action="{{ url_for('edit_pds', id=employee.id) if employee else url_for('submit_pds') }}" method="POST" class="card shadow-sm p-4">
 
-        <!-- Row containing First Name and Name Extension -->
-        <div class="row">
-            <div class="col-md-8 mb-3"> <!-- First Name column (wider) -->
-                <label class="form-label fw-bold">2. FIRST NAME</label>
-                <input type="text" name="first_name" class="form-control" required>
-            </div>
-            <div class="col-md-4 mb-3"> <!-- Name Extension column (smaller) -->
-                <label class="form-label fw-bold">NAME EXTENSION</label>
-                <input type="text" name="name_ext" class="form-control" placeholder="e.g. JR, SR">
-            </div>
-        </div>
+        <section id="section1" class="section-heading">
+            <!-- SECTION 1: PERSONAL INFORMATION -->
+            <h4 class="text-primary border-bottom pb-2 mb-4">I. Personal Information</h4>
 
-        <!-- Middle Name -->
-        <div class="mb-3">
-            <label class="form-label fw-bold">MIDDLE NAME</label>
-            <input type="text" name="middle_name" class="form-control">
-        </div>
-
-        <div class="row">
-            <!-- COLUMN 1: Fields 3 to 15 -->
-            <div class="col-md-6">
-                <!-- 3. Date of Birth -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">3. DATE OF BIRTH</label>
-                    <input type="date" name="birthdate" class="form-control">
-                </div>
-
-                <!-- 4. Place of Birth -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">4. PLACE OF BIRTH</label>
-                    <input type="text" name="birthplace" class="form-control">
-                </div>
-
-                <!-- 5. Sex at Birth (Horizontal Radios) -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold d-block">5. SEX AT BIRTH</label>
-                    <div class="d-flex gap-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="sex" value="Male" id="sexMale">
-                            <label class="form-check-label" for="sexMale">Male</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="sex" value="Female" id="sexFemale">
-                            <label class="form-check-label" for="sexFemale">Female</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 6. Civil Status (Horizontal Radios) -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold d-block">6. CIVIL STATUS</label>
-                    <div class="d-flex flex-wrap gap-3">
-                        <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Single" id="s1"><label class="form-check-label" for="s1">Single</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Married" id="s2"><label class="form-check-label" for="s2">Married</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Widowed" id="s3"><label class="form-check-label" for="s3">Widowed</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Separated" id="s4"><label class="form-check-label" for="s4">Separated</label></div>
-                        <div class="form-check d-flex align-items-center gap-2">
-                            <input class="form-check-input" type="radio" name="civil_status" value="Other" id="statusOther">
-                            <label class="form-check-label" for="statusOther" style="white-space: nowrap;">Others:</label>
-                            <input type="text" name="civil_status_other" class="form-control form-control-sm" style="width: 150px;" placeholder="Specify">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 7 to 15 (Single Column) -->
-                <div class="mb-3"><label class="form-label fw-bold">7. HEIGHT (m)</label><input type="text" name="height_m" class="form-control"></div>
-                <div class="mb-3"><label class="form-label fw-bold">8. WEIGHT (kg)</label><input type="text" name="weight_kg" class="form-control"></div>
-                <div class="mb-3"><label class="form-label fw-bold">9. BLOOD TYPE</label><input type="text" name="blood_type" class="form-control"></div>
-                <div class="mb-3"><label class="form-label fw-bold">10. UMID ID NO.</label><input type="text" name="umid_id_num" class="form-control"></div>
-                <div class="mb-3"><label class="form-label fw-bold">11. PAG-IBIG ID NO.</label><input type="text" name="pagibig_id_num" class="form-control"></div>
-                <div class="mb-3"><label class="form-label fw-bold">12. PHILHEALTH NO.</label><input type="text" name="philhealth_num" class="form-control"></div>
-                <div class="mb-3"><label class="form-label fw-bold">13. PhilSys Number (PSN)</label><input type="text" name="philsys_num" class="form-control"></div>
-                <div class="mb-3"><label class="form-label fw-bold">14. TIN NO.</label><input type="text" name="tin_num" class="form-control"></div>
-                <div class="mb-3"><label class="form-label fw-bold">15. AGENCY EMPLOYEE NO.</label><input type="text" name="agency_emp_num" class="form-control"></div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">1. SURNAME</label>
+                <input type="text" name="surname" class="form-control" value="{{ employee.surname if employee else '' }}" {{ 'readonly' if mode == 'view' else '' }} required>
             </div>
 
-            <!-- COLUMN 2: RESERVED FOR 17 TO 21 -->
-            <div class="col-md-6">
-                
-                <!-- CITIZENSHIP -->
-                <div class="mb-4">
-                    <div class="d-flex align-items-center gap-2">
-                        <label class="form-label fw-bold">16. CITIZENSHIP</label>
-                        <label class="form-label fw-italic d-block"> (If holder of dual citizenship, please indicate the details.)</label>
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label class="form-label fw-bold">2. FIRST NAME</label>
+                    <input type="text" name="first_name" class="form-control"
+                        value="{{ employee.first_name if employee else '' }}"
+                        {% if mode == 'view' %}readonly{% endif %} required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">NAME EXTENSION</label>
+                    <input type="text" name="name_ext" class="form-control" placeholder="e.g. JR, SR"
+                        value="{{ employee.name_ext if employee else '' }}"
+                        {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">MIDDLE NAME</label>
+                <input type="text" name="middle_name" class="form-control"
+                    value="{{ employee.middle_name if employee else '' }}"
+                    {% if mode == 'view' %}readonly{% endif %}>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">3. DATE OF BIRTH</label>
+                        <input type="date" name="birthdate" class="form-control"
+                            value="{{ employee.birthdate if employee else '' }}"
+                            {% if mode == 'view' %}readonly{% endif %}>
                     </div>
-                    
-                    <div class="d-flex flex-wrap gap-3">
-                        <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="Filipino" id="s1"><label class="form-check-label" for="s1">Filipino</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="Dual Citizenship" id="s2"><label class="form-check-label" for="s2">Dual Citizenship</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="byBirth" id="s3"><label class="form-check-label" for="s3">By Birth</label></div>
-                        <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="byNaturalization" id="s4"><label class="form-check-label" for="s4">By Naturalization</label></div>
-                        
-                        <!-- Aligned Row -->
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">4. PLACE OF BIRTH</label>
+                        <input type="text" name="birthplace" class="form-control"
+                            value="{{ employee.birthplace if employee else '' }}"
+                            {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold d-block">5. SEX AT BIRTH</label>
+                        <div class="d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sex" value="Male" id="sexMale"
+                                    {% if employee and employee.sex == 'Male' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}>
+                                <label class="form-check-label" for="sexMale">Male</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sex" value="Female" id="sexFemale"
+                                    {% if employee and employee.sex == 'Female' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}>
+                                <label class="form-check-label" for="sexFemale">Female</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold d-block">6. CIVIL STATUS</label>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Single" id="s1" {% if employee and employee.civil_status == 'Single' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label" for="s1">Single</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Married" id="s2" {% if employee and employee.civil_status == 'Married' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label" for="s2">Married</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Widowed" id="s3" {% if employee and employee.civil_status == 'Widowed' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label" for="s3">Widowed</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="civil_status" value="Separated" id="s4" {% if employee and employee.civil_status == 'Separated' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label" for="s4">Separated</label></div>
+                            <div class="form-check d-flex align-items-center gap-2">
+                                <input class="form-check-input" type="radio" name="civil_status" value="Other" id="statusOther" {% if employee and employee.civil_status and 'Other' in employee.civil_status %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}>
+                                <label class="form-check-label" for="statusOther" style="white-space: nowrap;">Others:</label>
+                                <input type="text" name="civil_status_other" class="form-control form-control-sm" style="width: 150px;" placeholder="Specify"
+                                       value="{{ employee.civil_status_other if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3"><label class="form-label fw-bold">7. HEIGHT (m)</label><input type="text" name="height_m" class="form-control" value="{{ employee.height_m if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></div>
+                    <div class="mb-3"><label class="form-label fw-bold">8. WEIGHT (kg)</label><input type="text" name="weight_kg" class="form-control" value="{{ employee.weight_kg if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></div>
+                    <div class="mb-3"><label class="form-label fw-bold">9. BLOOD TYPE</label><input type="text" name="blood_type" class="form-control" value="{{ employee.blood_type if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></div>
+                    <div class="mb-3"><label class="form-label fw-bold">10. UMID ID NO.</label><input type="text" name="umid_id_num" class="form-control" value="{{ employee.umid_id_num if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></div>
+                    <div class="mb-3"><label class="form-label fw-bold">11. PAG-IBIG ID NO.</label><input type="text" name="pagibig_id_num" class="form-control" value="{{ employee.pagibig_id_num if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></div>
+                    <div class="mb-3"><label class="form-label fw-bold">12. PHILHEALTH NO.</label><input type="text" name="philhealth_num" class="form-control" value="{{ employee.philhealth_num if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></div>
+                    <div class="mb-3"><label class="form-label fw-bold">13. PhilSys Number (PSN)</label><input type="text" name="philsys_num" class="form-control" value="{{ employee.philsys_num if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></div>
+                    <div class="mb-3"><label class="form-label fw-bold">14. TIN NO.</label><input type="text" name="tin_num" class="form-control" value="{{ employee.tin_num if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></div>
+                    <div class="mb-3"><label class="form-label fw-bold">15. AGENCY EMPLOYEE NO.</label><input type="text" name="agency_emp_num" class="form-control" value="{{ employee.agency_emp_num if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></div>
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="mb-4">
                         <div class="d-flex align-items-center gap-2">
-                            <label class="form-label fw-italic mb-0" style="white-space: nowrap;">Pls. indicate country:</label>
-                            <input type="text" name="country" class="form-control form-control-sm" style="width: 150px;">
+                            <label class="form-label fw-bold">16. CITIZENSHIP</label>
+                            <label class="form-label fw-italic d-block"> (If holder of dual citizenship, please indicate the details.)</label>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="Filipino" id="c1" {% if employee and employee.citizenship == 'Filipino' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label" for="c1">Filipino</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="Dual Citizenship" id="c2" {% if employee and employee.citizenship == 'Dual Citizenship' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label" for="c2">Dual Citizenship</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="byBirth" id="c3" {% if employee and employee.citizenship == 'byBirth' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label" for="c3">By Birth</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="citizenship" value="byNaturalization" id="c4" {% if employee and employee.citizenship == 'byNaturalization' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label" for="c4">By Naturalization</label></div>
+
+                            <div class="d-flex align-items-center gap-2">
+                                <label class="form-label fw-italic mb-0" style="white-space: nowrap;">Pls. indicate country:</label>
+                                <input type="text" name="country" class="form-control form-control-sm" style="width: 150px;" value="{{ employee.country if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Residential Address -->
-                <div class="row">
-                    <label class="form-label fw-bold">17. RESIDENTIAL ADDRESS</label>
                     <div class="row">
-                        <!-- ZIP CODE: Full width -->
+                        <label class="form-label fw-bold">17. RESIDENTIAL ADDRESS</label>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-semi-bold">ZIP CODE</label>
+                                <input type="text" name="zip_code" class="form-control" value="{{ (employee.res_address | from_json).zip_code if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semi-bold">House/Block/Lot No.</label>
+                                <input type="text" name="house" class="form-control" value="{{ (employee.res_address | from_json).house if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semi-bold">Street</label>
+                                <input type="text" name="street" class="form-control" value="{{ (employee.res_address | from_json).street if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semi-bold">Subdivision/Village</label>
+                                <input type="text" name="village" class="form-control" value="{{ (employee.res_address | from_json).village if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semi-bold">Barangay</label>
+                                <input type="text" name="barangay" class="form-control" value="{{ (employee.res_address | from_json).barangay if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semi-bold">City/Municipality</label>
+                                <input type="text" name="city" class="form-control" value="{{ (employee.res_address | from_json).city if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semi-bold">Province</label>
+                                <input type="text" name="province" class="form-control" value="{{ (employee.res_address | from_json).province if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="form-label fw-bold">18. PERMANENT ADDRESS</label>
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-semi-bold">ZIP CODE</label>
-                            <input type="text" name="zip" class="form-control" required>
+                            <input type="text" name="perm_zip_code" class="form-control" value="{{ (employee.perm_address | from_json).zip_code if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                         </div>
 
-                        <!-- House/Street: Side-by-side -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semi-bold">House/Block/Lot No.</label>
-                            <input type="text" name="house" class="form-control" required>
+                            <input type="text" name="perm_house" class="form-control" value="{{ (employee.perm_address | from_json).house if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semi-bold">Street</label>
-                            <input type="text" name="street" class="form-control" required>
+                            <input type="text" name="perm_street" class="form-control" value="{{ (employee.perm_address | from_json).street if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                         </div>
 
-                        <!-- Village/Barangay: Side-by-side -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semi-bold">Subdivision/Village</label>
-                            <input type="text" name="village" class="form-control" required>
+                            <input type="text" name="perm_village" class="form-control" value="{{ (employee.perm_address | from_json).village if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semi-bold">Barangay</label>
-                            <input type="text" name="barangay" class="form-control" required>
+                            <input type="text" name="perm_barangay" class="form-control" value="{{ (employee.perm_address | from_json).barangay if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                         </div>
 
-                        <!-- City/Province: Side-by-side -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semi-bold">City/Municipality</label>
-                            <input type="text" name="city" class="form-control" required>
+                            <input type="text" name="perm_city" class="form-control" value="{{ (employee.perm_address | from_json).city if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semi-bold">Province</label>
-                            <input type="text" name="province" class="form-control" required>
+                            <input type="text" name="perm_province" class="form-control" value="{{ (employee.perm_address | from_json).province if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">19. TELEPHONE NO.</label>
+                        <input type="text" name="telephone_num" class="form-control" value="{{ employee.telephone_num if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">20. MOBILE NO.</label>
+                        <input type="text" name="mobile_num" class="form-control" value="{{ employee.mobile_num if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">21. EMAIL ADDRESS (if any)</label>
+                        <input type="text" name="email_add" class="form-control" value="{{ employee.email_add if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section2" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4">II. Family Background</h4>
+
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">22. SPOUSE'S SURNAME</label>
+                        <input type="text" name="spouse_surname" class="form-control" value="{{ employee.spouse_surname if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label fw-bold">FIRST NAME</label>
+                            <input type="text" name="spouse_first_name" class="form-control" value="{{ employee.spouse_firstname if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">NAME EXTENSION</label>
+                            <input type="text" name="spouse_extensionname" class="form-control" placeholder="e.g. JR, SR" value="{{ employee.spouse_extensionname if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">MIDDLE NAME</label>
+                        <input type="text" name="spouse_middle_name" class="form-control" value="{{ employee.spouse_middlename if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">OCCUPATION</label>
+                        <input type="text" name="spouse_occupation" class="form-control" value="{{ employee.spouse_occupation if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">EMPLOYER/BUSINESS NAME</label>
+                        <input type="text" name="spouse_employer" class="form-control" value="{{ employee.spouse_employer if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">BUSINESS ADDRESS</label>
+                        <input type="text" name="spouse_business_add" class="form-control" value="{{ employee.spouse_business_add if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">TELEPHONE NO.</label>
+                        <input type="text" name="spouse_telephone" class="form-control" value="{{ employee.spouse_telephone if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">24. FATHER'S SURNAME</label>
+                        <input type="text" name="father_surname" class="form-control" value="{{ employee.father_surname if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label fw-bold">FIRST NAME</label>
+                            <input type="text" name="father_firstname" class="form-control" value="{{ employee.father_firstname if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">NAME EXTENSION</label>
+                            <input type="text" name="father_extensionname" class="form-control" placeholder="e.g. JR, SR" value="{{ employee.father_extensionname if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">MIDDLE NAME</label>
+                        <input type="text" name="father_middlename" class="form-control" value="{{ employee.father_middlename if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">25. MOTHER'S MAIDEN NAME</label>
+                        <input type="text" name="mother_maidenname" class="form-control" value="{{ employee.mother_maidenname if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">SURNAME</label>
+                        <input type="text" name="mother_surname" class="form-control" value="{{ employee.mother_surname if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">FIRST NAME</label>
+                        <input type="text" name="mother_firstname" class="form-control" value="{{ employee.mother_firstname if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">MIDDLE NAME</label>
+                        <input type="text" name="mother_middlename" class="form-control" value="{{ employee.mother_middlename if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6" id="children-container">
+                    <div class="mb-3 d-flex align-items-center">
+                        <label class="form-label fw-bold mb-0 me-2">23. NAME OF CHILDREN</label>
+                        {% if mode != 'view' %}
+                            <button type="button" class="btn btn-sm btn-success" onclick="addChildRow()">+</button>
+                        {% endif %}
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-6 fw-bold small">FULL NAME</div>
+                        <div class="col-md-6 fw-bold small">DATE OF BIRTH (dd/mm/yyyy)</div>
+                    </div>
+
+                    {% if employee and employee.children_list and (employee.children_list | from_json) %}
+                        {% for child in employee.children_list | from_json %}
+                            <div class="row child-row mb-2">
+                                <div class="col-md-6">
+                                    <input type="text" name="child_name[]" class="form-control" value="{{ child.name }}" {% if mode == 'view' %}readonly{% endif %}>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="date" name="child_dob[]" class="form-control" value="{{ child.date_of_birth }}" {% if mode == 'view' %}readonly{% endif %}>
+                                </div>
+                                <div class="col-md-1">
+                                    {% if mode != 'view' %}
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">×</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="row child-row mb-2">
+                            <div class="col-md-6">
+                                <input type="text" name="child_name[]" class="form-control" placeholder="Full Name" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="date" name="child_dob[]" class="form-control" {% if mode == 'view' %}readonly{% endif %}>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <section id="section3" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4">III. Educational Background</h4>
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th rowspan="2" style="width: 15%;">LEVEL</th>
+                            <th rowspan="2" style="width: 25%;">NAME OF SCHOOL</th>
+                            <th rowspan="2" style="width: 20%;">BASIC EDUCATION/DEGREE/COURSE</th>
+                            <th colspan="2">PERIOD OF ATTENDANCE</th>
+                            <th rowspan="2" style="width: 10%;">HIGHEST LEVEL/UNITS EARNED</th>
+                            <th rowspan="2" style="width: 10%;">YEAR GRADUATED</th>
+                            <th rowspan="2" style="width: 15%;">SCHOLARSHIP/HONORS</th>
+                        </tr>
+                        <tr>
+                            <th style="width: 10%;">From</th>
+                            <th style="width: 10%;">To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold bg-light">ELEMENTARY</td>
+                            <td><input type="text" name="elem_school" class="form-control form-control-sm" value="{{ employee.elem_school if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="elem_degree" class="form-control form-control-sm" value="{{ employee.elem_degree if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="elem_from" class="form-control form-control-sm" value="{{ employee.elem_from if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="elem_to" class="form-control form-control-sm" value="{{ employee.elem_to if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="elem_units" class="form-control form-control-sm" value="{{ employee.elem_units if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="elem_grad" class="form-control form-control-sm" value="{{ employee.elem_grad if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="elem_honors" class="form-control form-control-sm" value="{{ employee.elem_honors if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold bg-light">SECONDARY</td>
+                            <td><input type="text" name="sec_school" class="form-control form-control-sm" value="{{ employee.sec_school if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="sec_degree" class="form-control form-control-sm" value="{{ employee.sec_degree if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="sec_from" class="form-control form-control-sm" value="{{ employee.sec_from if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="sec_to" class="form-control form-control-sm" value="{{ employee.sec_to if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="sec_units" class="form-control form-control-sm" value="{{ employee.sec_units if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="sec_grad" class="form-control form-control-sm" value="{{ employee.sec_grad if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="sec_honors" class="form-control form-control-sm" value="{{ employee.sec_honors if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold bg-light">VOCATIONAL / TRADE COURSE</td>
+                            <td><input type="text" name="voc_school" class="form-control form-control-sm" value="{{ employee.voc_school if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="voc_degree" class="form-control form-control-sm" value="{{ employee.voc_degree if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="voc_from" class="form-control form-control-sm" value="{{ employee.voc_from if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="voc_to" class="form-control form-control-sm" value="{{ employee.voc_to if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="voc_units" class="form-control form-control-sm" value="{{ employee.voc_units if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="voc_grad" class="form-control form-control-sm" value="{{ employee.voc_grad if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="voc_honors" class="form-control form-control-sm" value="{{ employee.voc_honors if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold bg-light">COLLEGE</td>
+                            <td><input type="text" name="college_school" class="form-control form-control-sm" value="{{ employee.college_school if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="college_degree" class="form-control form-control-sm" value="{{ employee.college_degree if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="college_from" class="form-control form-control-sm" value="{{ employee.college_from if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="college_to" class="form-control form-control-sm" value="{{ employee.college_to if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="college_units" class="form-control form-control-sm" value="{{ employee.college_units if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="college_grad" class="form-control form-control-sm" value="{{ employee.college_grad if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="college_honors" class="form-control form-control-sm" value="{{ employee.college_honors if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold bg-light">GRADUATE STUDIES</td>
+                            <td><input type="text" name="grad_school" class="form-control form-control-sm" value="{{ employee.grad_school if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="grad_degree" class="form-control form-control-sm" value="{{ employee.grad_degree if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="grad_from" class="form-control form-control-sm" value="{{ employee.grad_from if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="grad_to" class="form-control form-control-sm" value="{{ employee.grad_to if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="grad_units" class="form-control form-control-sm" value="{{ employee.grad_units if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="grad_grad" class="form-control form-control-sm" value="{{ employee.grad_grad if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                            <td><input type="text" name="grad_honors" class="form-control form-control-sm" value="{{ employee.grad_honors if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="section4" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4 mt-5">IV. Civil Service Eligibility</h4>
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="eligibility-table">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th rowspan="2" style="width: 30%;">CAREER SERVICE/RA 1080 (BOARD/BAR)</th>
+                            <th rowspan="2" style="width: 10%;">RATING</th>
+                            <th rowspan="2" style="width: 15%;">DATE OF EXAMINATION</th>
+                            <th rowspan="2" style="width: 20%;">PLACE OF EXAMINATION</th>
+                            <th colspan="2">LICENSE (if applicable)</th>
+                        </tr>
+                        <tr>
+                            <th>Number</th>
+                            <th>Valid Until</th>
+                        </tr>
+                    </thead>
+                    <tbody id="eligibility-body">
+                        {% if employee and employee.civil_service_eligibility and (employee.civil_service_eligibility | from_json) %}
+                            {% for row in employee.civil_service_eligibility | from_json %}
+                                <tr>
+                                    <td><input type="text" name="cs_career[]" class="form-control form-control-sm" value="{{ row.career_service }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="cs_rating[]" class="form-control form-control-sm" value="{{ row.rating }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="cs_date[]" class="form-control form-control-sm" value="{{ row.date_of_examination }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="cs_place[]" class="form-control form-control-sm" value="{{ row.place_of_examination }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="cs_lic_num[]" class="form-control form-control-sm" value="{{ row.license_number }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="cs_validity[]" class="form-control form-control-sm" value="{{ row.date_of_validity }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td><input type="text" name="cs_career[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="cs_rating[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="cs_date[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="cs_place[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="cs_lic_num[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="cs_validity[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% if mode != 'view' %}
+                    <button type="button" class="btn btn-success btn-sm" onclick="addEligibilityRow()">+ Add Eligibility</button>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="section5" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4 mt-5">V. Work Experience</h4>
+            <p class="text-muted small">Include private employment. Start from your most recent work.</p>
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="workexp-table">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Position Title</th>
+                            <th>Department/Agency/Office/Company</th>
+                            <th>Status of Appointment</th>
+                            <th>Gov't Service (Y/N)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workexp-body">
+                        {% if employee and employee.work_experience and (employee.work_experience | from_json) %}
+                            {% for row in employee.work_experience | from_json %}
+                                <tr>
+                                    <td><input type="date" name="we_from[]" class="form-control form-control-sm" value="{{ row.from_date }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="date" name="we_to[]" class="form-control form-control-sm" value="{{ row.to_date }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="we_position[]" class="form-control form-control-sm" value="{{ row.position_title }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="we_department[]" class="form-control form-control-sm" value="{{ row.department_agency }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="we_status[]" class="form-control form-control-sm" value="{{ row.status_of_appointment }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="we_govt_service[]" class="form-control form-control-sm" value="{{ row.govt_service }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td><input type="date" name="we_from[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="date" name="we_to[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="we_position[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="we_department[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="we_status[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="we_govt_service[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% if mode != 'view' %}
+                    <button type="button" class="btn btn-success btn-sm" onclick="addWorkExpRow()">+ Add Work Experience</button>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="section6" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4 mt-5">VI. Voluntary Work / Involvement in Civic or Non-Government Organizations</h4>
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="voluntary-table">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>Name &amp; Address of Organization</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Number of Hours</th>
+                            <th>Position/Nature of Work</th>
+                        </tr>
+                    </thead>
+                    <tbody id="voluntary-body">
+                        {% if employee and employee.voluntary_work and (employee.voluntary_work | from_json) %}
+                            {% for row in employee.voluntary_work | from_json %}
+                                <tr>
+                                    <td><input type="text" name="vw_org[]" class="form-control form-control-sm" value="{{ row.organization }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="date" name="vw_from[]" class="form-control form-control-sm" value="{{ row.from_date }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="date" name="vw_to[]" class="form-control form-control-sm" value="{{ row.to_date }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="vw_hours[]" class="form-control form-control-sm" value="{{ row.hours }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="vw_position[]" class="form-control form-control-sm" value="{{ row.position_nature }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td><input type="text" name="vw_org[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="date" name="vw_from[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="date" name="vw_to[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="vw_hours[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="vw_position[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% if mode != 'view' %}
+                    <button type="button" class="btn btn-success btn-sm" onclick="addVoluntaryRow()">+ Add Voluntary Work</button>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="section7" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4 mt-5">VII. Learning and Development (L&amp;D) Interventions / Training Programs Attended</h4>
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="ld-table">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>Title of L&amp;D Intervention/Training Program</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Number of Hours</th>
+                            <th>Type (Managerial/Supervisory/Technical/etc)</th>
+                            <th>Conducted/Sponsored By</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ld-body">
+                        {% if employee and employee.learning_and_development and (employee.learning_and_development | from_json) %}
+                            {% for row in employee.learning_and_development | from_json %}
+                                <tr>
+                                    <td><input type="text" name="ld_title[]" class="form-control form-control-sm" value="{{ row.title }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="date" name="ld_from[]" class="form-control form-control-sm" value="{{ row.from_date }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="date" name="ld_to[]" class="form-control form-control-sm" value="{{ row.to_date }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="ld_hours[]" class="form-control form-control-sm" value="{{ row.hours }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="ld_type[]" class="form-control form-control-sm" value="{{ row.type }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="ld_conducted_by[]" class="form-control form-control-sm" value="{{ row.conducted_by }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td><input type="text" name="ld_title[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="date" name="ld_from[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="date" name="ld_to[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="ld_hours[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="ld_type[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="ld_conducted_by[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% if mode != 'view' %}
+                    <button type="button" class="btn btn-success btn-sm" onclick="addLDRow()">+ Add Training Program</button>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="section8" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4 mt-5">VIII. Other Information</h4>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">31. SPECIAL SKILLS and HOBBIES</label>
+                    <textarea name="skills_and_hobbies" class="form-control" rows="6" placeholder="One per line" {% if mode == 'view' %}readonly{% endif %}>{{ (employee.skills_and_hobbies | from_json) | join('\n') if employee else '' }}</textarea>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">32. NON-ACADEMIC DISTINCTIONS / RECOGNITION</label>
+                    <textarea name="non_academic_distinctions" class="form-control" rows="6" placeholder="One per line" {% if mode == 'view' %}readonly{% endif %}>{{ (employee.non_academic_distinctions | from_json) | join('\n') if employee else '' }}</textarea>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">33. MEMBERSHIP IN ASSOCIATION/ORGANIZATION</label>
+                    <textarea name="membership_in_assoc_org" class="form-control" rows="6" placeholder="One per line" {% if mode == 'view' %}readonly{% endif %}>{{ (employee.membership_in_assoc_org | from_json) | join('\n') if employee else '' }}</textarea>
+                </div>
+            </div>
+        </section>
+
+        <section id="section9" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4 mt-5">Background Questions</h4>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">34. Are you related by consanguinity or affinity to the appointing or recommending authority, or to the chief of bureau or office, or to the person who has immediate supervision over you in the Office, Bureau or Department where you will be appointed,</label>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">a. Within the third degree?</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check"><input class="form-check-input" type="radio" name="rel_3rd_degree" value="Yes" {% if employee and employee.rel_3rd_degree == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="rel_3rd_degree" value="No" {% if employee and employee.rel_3rd_degree == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                        </div>
+                        <input type="text" name="rel_3rd_degree_details" class="form-control form-control-sm mt-1" placeholder="If YES, give details" value="{{ employee.rel_3rd_degree_details if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">b. Within the fourth degree (for Local Government Unit - Career Employees)?</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check"><input class="form-check-input" type="radio" name="rel_4th_degree" value="Yes" {% if employee and employee.rel_4th_degree == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                            <div class="form-check"><input class="form-check-input" type="radio" name="rel_4th_degree" value="No" {% if employee and employee.rel_4th_degree == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                        </div>
+                        <input type="text" name="rel_4th_degree_details" class="form-control form-control-sm mt-1" placeholder="If YES, give details" value="{{ employee.rel_4th_degree_details if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold">35a. Have you ever been found guilty of any administrative offense?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="admin_offense_guilty" value="Yes" {% if employee and employee.admin_offense_guilty == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="admin_offense_guilty" value="No" {% if employee and employee.admin_offense_guilty == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="admin_offense_details" class="form-control form-control-sm mt-1" placeholder="If YES, give details" value="{{ employee.admin_offense_details if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold">35b. Have you been criminally charged before any court?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="criminally_charged" value="Yes" {% if employee and employee.criminally_charged == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="criminally_charged" value="No" {% if employee and employee.criminally_charged == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="criminal_charge_details" class="form-control form-control-sm mt-1" placeholder="If YES, give details" value="{{ employee.criminal_charge_details if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                    <div class="row mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label small">Date Filed</label>
+                            <input type="date" name="criminal_date_filed" class="form-control form-control-sm" value="{{ employee.criminal_date_filed if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small">Status of Case/s</label>
+                            <input type="text" name="criminal_case_status" class="form-control form-control-sm" value="{{ employee.criminal_case_status if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                         </div>
                     </div>
                 </div>
 
-                <!-- Permanent Address -->
-                <div class="row">
-                    <label class="form-label fw-bold">18. PERMANENT ADDRESS</label>
-                    <!-- ZIP CODE: Full width -->
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label fw-semi-bold">ZIP CODE</label>
-                            <input type="text" name="zip" class="form-control" required>
-                        </div>
-
-                        <!-- House/Street: Side-by-side -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semi-bold">House/Block/Lot No.</label>
-                            <input type="text" name="house" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semi-bold">Street</label>
-                            <input type="text" name="street" class="form-control" required>
-                        </div>
-
-                        <!-- Village/Barangay: Side-by-side -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semi-bold">Subdivision/Village</label>
-                            <input type="text" name="village" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semi-bold">Barangay</label>
-                            <input type="text" name="barangay" class="form-control" required>
-                        </div>
-
-                        <!-- City/Province: Side-by-side -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semi-bold">City/Municipality</label>
-                            <input type="text" name="city" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semi-bold">Province</label>
-                            <input type="text" name="province" class="form-control" required>
-                        </div>
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold">36. Have you ever been convicted of any crime or violation of law, decree, ordinance or regulation by any court or tribunal?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="convicted_crime" value="Yes" {% if employee and employee.convicted_crime == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="convicted_crime" value="No" {% if employee and employee.convicted_crime == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="convicted_crime_details" class="form-control form-control-sm mt-1" placeholder="If YES, give details" value="{{ employee.convicted_crime_details if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                 </div>
 
-                <!-- TELEPHONE NO. -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">19. TELEPHONE NO.</label>
-                    <input type="text" name="telephone_num" class="form-control">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold">37. Have you ever been separated from the service (resignation, retirement, dropped from rolls, dismissal, termination, end of term, finished contract, or phased out (abolition) in the public or private sector?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="separated_from_service" value="Yes" {% if employee and employee.separated_from_service == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="separated_from_service" value="No" {% if employee and employee.separated_from_service == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="separation_details" class="form-control form-control-sm mt-1" placeholder="If YES, give details" value="{{ employee.separation_details if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                 </div>
 
-                <!-- MOBILE NO. -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">20. MOBILE NO.</label>
-                    <input type="text" name="mobile_num" class="form-control">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold">38a. Have you ever been a candidate in a national or local election held within the last year (except Barangay election)?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="candidate_election" value="Yes" {% if employee and employee.candidate_election == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="candidate_election" value="No" {% if employee and employee.candidate_election == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="candidate_election_details" class="form-control form-control-sm mt-1" placeholder="If YES, give details" value="{{ employee.candidate_election_details if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                 </div>
 
-                <!-- EMAIL ADDRESS -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">21. EMAIL ADDRESS (if any)</label>
-                    <input type="text" name="email_add" class="form-control">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold">38b. Have you resigned from government service during the 3-month period before the last election to promoto/actively campaign for a national or local candidate?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="resigned_to_campaign" value="Yes" {% if employee and employee.resigned_to_campaign == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="resigned_to_campaign" value="No" {% if employee and employee.resigned_to_campaign == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="resigned_campaign_details" class="form-control form-control-sm mt-1" placeholder="If YES, give details" value="{{ employee.resigned_campaign_details if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
                 </div>
 
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold">39. Have you acquired the status of an immigrant or permanent resident of another country?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="immigrant_status" value="Yes" {% if employee and employee.immigrant_status == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="immigrant_status" value="No" {% if employee and employee.immigrant_status == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="immigrant_country" class="form-control form-control-sm mt-1" placeholder="If YES, give country" value="{{ employee.immigrant_country if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
             </div>
+
+            <h6 class="fw-bold mt-3">40. Pursuant to: (a) Indigenous People's Act (RA 8371); (b) Magna Carta for Disabled Persons (RA 7277, as amended); and (c) Expanded Solo Parents Welfare Act (RA 11861), please answer the following items:</h6>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">a. Are you a member of any indigenous group?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="indigenous_member" value="Yes" {% if employee and employee.indigenous_member == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="indigenous_member" value="No" {% if employee and employee.indigenous_member == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="indigenous_details" class="form-control form-control-sm mt-1" placeholder="If YES, please specify" value="{{ employee.indigenous_details if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">b. Are you a person with disability?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="disability" value="Yes" {% if employee and employee.disability == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="disability" value="No" {% if employee and employee.disability == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="disability_id_no" class="form-control form-control-sm mt-1" placeholder="If YES, specify ID No." value="{{ employee.disability_id_no if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">c. Are you a solo parent?</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check"><input class="form-check-input" type="radio" name="solo_parent" value="Yes" {% if employee and employee.solo_parent == 'Yes' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">Yes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="radio" name="solo_parent" value="No" {% if employee and employee.solo_parent == 'No' %}checked{% endif %} {% if mode == 'view' %}disabled{% endif %}><label class="form-check-label">No</label></div>
+                    </div>
+                    <input type="text" name="solo_parent_id_no" class="form-control form-control-sm mt-1" placeholder="If YES, specify ID No." value="{{ employee.solo_parent_id_no if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+            </div>
+        </section>
+
+        <section id="section10" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4 mt-5">41. References</h4>
+            <p class="text-muted small">Person not related by consanguinity or affinity to the applicant/appointee.</p>
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="references-table">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th>Name</th>
+                            <th>Office/Residential Address</th>
+                            <th>Contact No. and/or Email</th>
+                        </tr>
+                    </thead>
+                    <tbody id="references-body">
+                        {% if employee and employee.references_list and (employee.references_list | from_json) %}
+                            {% for row in employee.references_list | from_json %}
+                                <tr>
+                                    <td><input type="text" name="ref_name[]" class="form-control form-control-sm" value="{{ row.name }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="ref_address[]" class="form-control form-control-sm" value="{{ row.address }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                    <td><input type="text" name="ref_contact[]" class="form-control form-control-sm" value="{{ row.contact }}" {% if mode == 'view' %}readonly{% endif %}></td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            {% for i in range(3) %}
+                            <tr>
+                                <td><input type="text" name="ref_name[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="ref_address[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                                <td><input type="text" name="ref_contact[]" class="form-control form-control-sm" {% if mode == 'view' %}readonly{% endif %}></td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% if mode != 'view' %}
+                    <button type="button" class="btn btn-success btn-sm" onclick="addReferenceRow()">+ Add Reference</button>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="section11" class="section-heading">
+            <h4 class="text-primary border-bottom pb-2 mb-4 mt-5">42. Certification</h4>
+            <p class="small text-muted">
+                I declare under oath that I have personally accomplished this Personal Data Sheet which is a true, correct,
+                and complete statement pursuant to the provisions of pertinent laws, rules, and regulations of the Republic
+                of the Philippines. I authorize the agency head/authorized representative to verify/validate the contents
+                stated herein. I agree that any misrepresentation made in this document and its attachments shall cause the
+                filing of administrative/criminal case/s against me.
+            </p>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">Government Issued ID</label>
+                    <input type="text" name="gov_id_type" class="form-control" placeholder="e.g. Passport, GSIS, SSS, PRC, Driver's License" value="{{ employee.gov_id_type if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">ID/License/Passport No.</label>
+                    <input type="text" name="gov_id_number" class="form-control" value="{{ employee.gov_id_number if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">Date/Place of Issuance</label>
+                    <input type="text" name="gov_id_date_place_issuance" class="form-control" value="{{ employee.gov_id_date_place_issuance if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-bold">Date Accomplished</label>
+                    <input type="date" name="date_accomplished" class="form-control" value="{{ employee.date_accomplished if employee else '' }}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+            </div>
+            <p class="small text-muted fst-italic">
+                Note: Photo, wet/e-signature, and right thumbmark are captured on the physical/notarized copy and are not part of this digital record.
+            </p>
+        </section>
+
+        <div class="d-flex gap-3 mt-4">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-lg w-50">
+                &lt; Back to Dashboard
+            </a>
+
+            {% if mode != 'view' %}
+            <button type="submit" class="btn btn-primary btn-lg w-50">
+                Save PDS Record
+            </button>
+            {% endif %}
         </div>
 
-
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
-            Save PDS Record
-        </button>
-
-    </form>
+        </form>
+    </div>
 </div>
 
-<div class="alert alert-success" role="alert">
-  Bootstrap is successfully loaded!
-</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function () {
+                form.querySelectorAll('input, textarea, select').forEach(function (field) {
+                    if (field.type === 'radio' || field.type === 'checkbox') {
+                        return;
+                    }
+                    if (field.value === null || field.value.trim() === '') {
+                        field.value = 'N/A';
+                    }
+                });
+            });
+        }
+
+        // Highlight the active sidebar link based on scroll position
+        const sections = document.querySelectorAll('.section-heading');
+        const navLinks = document.querySelectorAll('.sidebar .nav-link');
+        const onScroll = () => {
+            let currentId = '';
+            sections.forEach(sec => {
+                const rect = sec.getBoundingClientRect();
+                if (rect.top <= 120) currentId = sec.id;
+            });
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
+            });
+        };
+        window.addEventListener('scroll', onScroll);
+        onScroll();
+    });
+
+    function addChildRow() {
+        const container = document.getElementById('children-container');
+        const newRow = document.createElement('div');
+        newRow.className = 'row child-row mb-2';
+        newRow.innerHTML = `
+            <div class="col-md-6">
+                <input type="text" name="child_name[]" class="form-control" placeholder="Full Name">
+            </div>
+            <div class="col-md-5">
+                <input type="date" name="child_dob[]" class="form-control">
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">×</button>
+            </div>
+        `;
+        container.appendChild(newRow);
+    }
+
+    function removeRow(btn) {
+        btn.closest('.child-row').remove();
+    }
+
+    function removeTableRow(btn) {
+        btn.closest('tr').remove();
+    }
+
+    function addEligibilityRow() {
+        const tbody = document.getElementById('eligibility-body');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" name="cs_career[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="cs_rating[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="cs_date[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="cs_place[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="cs_lic_num[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="cs_validity[]" class="form-control form-control-sm"></td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    function addWorkExpRow() {
+        const tbody = document.getElementById('workexp-body');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="date" name="we_from[]" class="form-control form-control-sm"></td>
+            <td><input type="date" name="we_to[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="we_position[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="we_department[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="we_status[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="we_govt_service[]" class="form-control form-control-sm"></td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    function addVoluntaryRow() {
+        const tbody = document.getElementById('voluntary-body');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" name="vw_org[]" class="form-control form-control-sm"></td>
+            <td><input type="date" name="vw_from[]" class="form-control form-control-sm"></td>
+            <td><input type="date" name="vw_to[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="vw_hours[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="vw_position[]" class="form-control form-control-sm"></td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    function addLDRow() {
+        const tbody = document.getElementById('ld-body');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" name="ld_title[]" class="form-control form-control-sm"></td>
+            <td><input type="date" name="ld_from[]" class="form-control form-control-sm"></td>
+            <td><input type="date" name="ld_to[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="ld_hours[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="ld_type[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="ld_conducted_by[]" class="form-control form-control-sm"></td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    function addReferenceRow() {
+        const tbody = document.getElementById('references-body');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" name="ref_name[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="ref_address[]" class="form-control form-control-sm"></td>
+            <td><input type="text" name="ref_contact[]" class="form-control form-control-sm"></td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    // Auto-size table text inputs so typed content is never clipped.
+    // Delegating the "input" listener to `document` (rather than attaching
+    // one listener per <input>) means rows added later via the "+ Add ..."
+    // buttons are sized automatically too, with no extra wiring needed.
+    function autoResizeTableInput(input) {
+        const charCount = input.value.length > 0 ? input.value.length + 2 : 10; // 10 = minimum width
+        input.style.width = charCount + 'ch';
+    }
+
+    document.querySelectorAll('.table input[type="text"]').forEach(autoResizeTableInput);
+
+    document.addEventListener('input', function (e) {
+        if (e.target.matches('.table input[type="text"]')) {
+            autoResizeTableInput(e.target);
+        }
+    });
+</script>
 
 </body>
-
 </html>
